@@ -1,0 +1,1799 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Shipsen COD Simulator</title>
+  <link rel="shortcut icon" href="fav.jpg" type="image/x-icon">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.13/jspdf.plugin.autotable.min.js"></script>
+</head>
+<style>
+.horizontal-table {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.horizontal-table .column {
+  flex: 1 1 33.33%;
+  margin-top: 20px;
+  margin-bottom: 5px;
+  padding: 0 0px;
+}
+
+.horizontal-table .column .text {
+  background-color: #f0f0f0;
+  padding: 10px;
+  margin-bottom: 10px;
+}
+
+/* Mobile view styles */
+@media (max-width: 900px) {
+  .horizontal-table {
+    flex-direction: column;
+  }
+
+  .horizontal-table .column {
+    flex: 1 1 100%;
+  }
+}
+
+/* Style for the flag icons */
+    .flag-icon {
+      width: 35px;
+      height: 24px;
+      margin-right: 0px;
+    }
+	
+.currency-input {
+      position: relative;
+    }
+
+    .currency-symbol {
+      position: absolute;
+      top: 73%;
+      left: 16px;
+      transform: translateY(-50%);
+      pointer-events: none;
+      background-color: #f0f0f0; /* Background color */
+      padding: 6px 15px; /* Adjust padding as needed */
+      border-radius: 3px; /* Add border radius for a rounded look */
+    }
+
+    .input-field {
+      padding-left: 55px; /* To accommodate the symbol */
+      border: 1px solid #ccc; /* Border for the input field */
+      border-radius: 3px; /* Add border radius for a rounded look */
+    }
+
+  .container-flex {
+    display: flex;
+    flex-wrap: wrap;
+  }
+
+  .container-flex .form-container {
+    flex: 1 1 50%;
+    padding-right: 10px;
+  }
+  
+  .container-flex #results-table {
+    flex: 1 1 50%;
+  }
+
+  #results-table table.table-bordered {
+    border-collapse: collapse;
+  }
+
+  #results-table table.table-bordered th,
+  #results-table table.table-bordered td {
+    border: none;
+    border-bottom: 1px solid #dee2e6;
+    padding: 5px 10px;
+    line-height: 1.2;
+  }
+
+  #results-table table.table-bordered thead th {
+    border-bottom: 2px solid #dee2e6;
+  }
+
+  /* Additional custom styling */
+  body {
+    padding: 20px;
+  }
+
+  /* Center align table content */
+  table {
+    margin: 0 auto;
+  }
+
+  /* Reduce padding on table cells */
+  td {
+    padding: 5px;
+  }
+
+  /* Add background color to table header cells */
+  th {
+    background-color: #343a40;
+    color: #fff;
+  }
+
+  .form-container {
+    max-width: 100%;
+    margin: 0 auto;
+    padding: 10px;
+  }
+  
+  .form-container .row {
+    margin-bottom: 5px;
+  }
+
+  .form-container .form-group .form-control {
+    width: 100%;
+    margin-top: 5px;
+  }
+  
+  .form-container .row .col-md-12 {
+    margin-bottom: 5px;
+  }
+
+  .form-container .form-group label {
+    margin-bottom: 0;
+  }
+
+  .form-container .form-group {
+    margin-bottom: 10px;
+  }
+
+  .form-container button {
+    width: 100%;
+  }
+
+  /* Custom classes for positive and negative values */
+  .positive {
+    color: green;
+    font-weight: bold;
+  }
+
+  .negative {
+    color: red;
+    font-weight: bold;
+  }
+
+.calculate-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 400px;
+  margin: 0 auto;
+}
+
+.calculate-button .icon {
+  margin-right: 15px;
+  font-size: 1em; /* Adjust the font size as desired */
+}
+
+  .section-container {
+    background-color: #f0f0f0;
+    padding: 10px;
+    margin-bottom: 20px;
+  }
+
+  .section-header {
+    background-color: #ccc;
+    color: #fff;
+    padding: 5px 10px;
+    font-weight: bold;
+  }
+
+  .section-body {
+    padding: 10px;
+  }
+
+  @media (min-width: 992px) {
+    .container-flex .form-container {
+      flex: 1 1 35%;
+    }
+
+    .container-flex #results-table {
+      flex: 1 1 65%;
+    }
+  }
+  
+  .header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 80px; /* Updated height to 180px */
+  background-color: #ffffff; /* Updated background color to white */
+  display: flex;
+  align-items: center;
+  justify-content: center; /* Updated to center align the logo */
+  padding: 0 20px;
+  box-sizing: border-box;
+  z-index: 999;
+  box-shadow: 0 1px 10px rgba(0, 0, 0, 0.1); /* Added box-shadow for the header */
+}
+
+.logo {
+  max-width: 350px; /* Updated width to use max-width */
+  height: auto;
+}
+
+.logo img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+
+    .content {
+    margin-top: 120px;
+    padding: 10px;
+    box-sizing: border-box;
+    display: flex;
+    flex-wrap: wrap;
+  }
+
+  .content-left {
+    flex: 1 1 100%;
+    margin-bottom: 20px; /* Added margin bottom to create space between content sections */
+  }
+
+  .content-right {
+    flex: 1 1 100%;
+  }
+
+  @media (min-width: 768px) {
+    .content-left {
+      flex: 1 1 50%;
+      margin-bottom: 0; /* Reset margin bottom for larger screens */
+      padding-right: 10px; /* Added padding right to create space between content sections */
+    }
+
+    .content-right {
+      flex: 1 1 50%;
+    }
+  }
+
+ .video-container {
+  max-width: 700px;
+  width: 100%;
+  height: 0;
+  padding-bottom: 56.25%; /* 16:9 aspect ratio (for YouTube videos) */
+  position: relative;
+  margin-top: 20px; /* Added margin top */
+}
+
+.video-container iframe {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+	
+	.footer {
+    padding: 10px;
+    text-align: center;
+}
+
+.footer-text {
+    color: #888;
+    font-size: 18px;
+	font-weight: 400;
+}
+
+.modal-content {
+  .footer .heart-symbol {
+    color: red;
+  }
+}
+
+/* Add this to your existing CSS */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0, 0, 0, 0.4);
+}
+
+
+.modal-content {
+  background-color: #fefefe;
+  margin: 10% auto;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 60%;
+  position: relative;
+}
+
+.close-button {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: none;
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
+  color: #888;
+}
+
+
+</style>
+</head>
+<body>
+<div class="header">
+    <div class="logo">
+        <img src="logo.png" alt="Shipsen simulator">
+    </div>
+</div>
+<div class="content">
+    <div class="content-left">
+        <h1 style="text-align: left;">
+            New <span style="color: #4285f4;">Shipsen</span> Simulator: Powerful tool designed to elevate your selling experience!
+        </h1>
+        <p style="text-align: left; color: gray; margin-top: 15px;">
+            The Shipsen Simulator is here to revolutionize your selling strategies. With advanced features and real-time calculations, it helps you optimize your budget, profit margins, and more. Take control of your business and unlock your selling potential with Shipsen today!
+        </p>
+        <p style="text-align: left; color: gray; margin-top: 10px;">Now available for Cash on Delivery (COD) operations in the following countries:</p>
+        <table style="border-collapse: collapse; margin-left: 0;">
+            <tr>
+                <td style="padding-right: 10px;"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/fe/Flag_of_C%C3%B4te_d%27Ivoire.svg/1200px-Flag_of_C%C3%B4te_d%27Ivoire.svg.png" alt="Côte d'Ivoire Flag" style="width: 20px; height: 15px;"></td>
+                <td style="padding-right: 30px;"><strong style="color: gray; font-weight: 600;">Côte d'Ivoire</strong></td>
+                <td style="padding-right: 10px;"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/31/Flag_of_Burkina_Faso.svg/165px-Flag_of_Burkina_Faso.svg.png" alt="Burkina Faso Flag" style="width: 20px; height: 15px;"></td>
+                <td style="padding-right: 30px;"><strong style="color: gray; font-weight: 600;">Burkina Faso</strong></td>
+            </tr>
+            <tr>
+                <td><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/fd/Flag_of_Senegal.svg/langfr-338px-Flag_of_Senegal.svg.png" alt="Senegal Flag" style="width: 20px; height: 15px;"></td>
+                <td style="padding-right: 60px;"><strong style="color: gray; font-weight: 600;">Senegal</strong></td>
+                <td><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/77/Flag_of_The_Gambia.svg/165px-Flag_of_The_Gambia.svg.png" alt="Gambia Flag" style="width: 20px; height: 15px;"></td>
+                <td><strong style="color: gray; font-weight: 600;">Gambia</strong></td>
+            </tr>
+            <tr>
+                <td><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/04/Flag_of_Gabon.svg/165px-Flag_of_Gabon.svg.png" alt="Gabon Flag" style="width: 20px; height: 15px;"></td>
+                <td style="padding-right: 80px;"><strong style="color: gray; font-weight: 600;">Gabon</strong></td>
+                <td><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/Flag_of_the_Democratic_Republic_of_the_Congo.svg/165px-Flag_of_the_Democratic_Republic_of_the_Congo.svg.png" alt="Congo Kinshasa Flag" style="width: 20px; height: 15px;"></td>
+                <td><strong style="color: gray; font-weight: 600;">Congo Kinshasa</strong></td>
+            </tr>
+            <tr>
+                <td><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/92/Flag_of_Mali.svg/165px-Flag_of_Mali.svg.png" alt="Mali Flag" style="width: 20px; height: 15px;"></td>
+                <td style="padding-right: 30px;"><strong style="color: gray; font-weight: 600;">Mali</strong></td>
+                <td><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/79/Flag_of_Nigeria.svg/165px-Flag_of_Nigeria.svg.png" alt="Nigeria Flag" style="width: 20px; height: 15px;"></td>
+                <td><strong style="color: gray; font-weight: 600;">Nigeria (Soon)</strong></td>
+            </tr>
+			<tr>
+                <td><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/ed/Flag_of_Guinea.svg/165px-Flag_of_Guinea.svg.png" alt="Guinea Conakry Flag" style="width: 20px; height: 15px;"></td>
+                <td style="padding-right: 30px;"><strong style="color: gray; font-weight: 600;">Guinea Conakry</strong></td>
+                <td><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/92/Flag_of_the_Republic_of_the_Congo.svg/165px-Flag_of_the_Republic_of_the_Congo.svg.png" alt="Congo Brazzaville Flag" style="width: 20px; height: 15px;"></td>
+                <td><strong style="color: gray; font-weight: 600;">Congo Brazzaville (Soon)</strong></td>
+            </tr>
+			<tr>
+                <td><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/4f/Flag_of_Cameroon.svg/165px-Flag_of_Cameroon.svg.png" alt="Cameroon" style="width: 20px; height: 15px;"></td>
+                <td style="padding-right: 30px;"><strong style="color: gray; font-weight: 600;">Cameroon</strong></td>
+            </tr>
+        </table>
+    </div>
+
+</div>
+
+
+<form id="simulator-form">
+<div class="horizontal-table">
+  <div class="column">
+    <div class="section-container">
+          <div class="section-header text-center" style="background-color:#343a40;">Market KPI's & Pricing</div>
+          <div class="section-body">
+          <div class="row">
+          <div class="col-md-12">
+    <label for="country">Country Warehousing:</label>
+    <div class="input-group">
+      <div class="input-group-prepend">
+        <span class="input-group-text">
+          <img class="flag-icon" id="selected-flag" alt="Selected Flag">
+        </span>
+      </div>
+      <select class="custom-select flag-dropdown" id="country" name="country" onchange="updateFlagIcon(); updateCurrencySymbol(); updateShippingMode()">
+        <option value="Senegal">Senegal</option>
+        <option value="Cote d'Ivoire">Cote d'Ivoire</option>
+        <option value="Mali">Mali</option>
+        <option value="Gabon">Gabon</option>
+        <option value="Cameroun">Cameroun</option>
+        <option value="Argentina">Argentina</option>
+        <option value="Guinea">Guinea</option>
+        <option value="Gambia">Gambia</option>
+        <option value="Burkina">Burkina Faso</option>
+        <option value="Congo Kinshasa">Congo Kinshasa</option>
+      </select>
+    </div>
+  </div>
+        </div>
+        <div class="row">
+          <div class="col-md-12 currency-input">
+		  <span class="currency-symbol">CFA</span>
+            <label for="selling-price">Selling Price :</label>
+            <input class="form-control input-field" style="padding-left: 70px;" type="text" id="selling-price" name="sellingPrice" value="20000" required>
+          </div>
+        </div>
+            <div class="row">
+              <div class="col-md-6 currency-input">
+			  <span class="currency-symbol">%</span>
+                <label for="confirmation-rate">Confirmation Rate:</label>
+                <input type="number" class="form-control input-field" id="confirmation-rate" name="confirmation-rate" value="50" placeholder="%">
+              </div>
+              <div class="col-md-6 currency-input">
+                <label for="delivery-rate">Delivery Rate:</label>
+				<span class="currency-symbol">%</span>
+                <input type="number" class="form-control input-field" id="delivery-rate" name="delivery-rate" value="50" placeholder="%">
+              </div>
+            </div>
+          </div>
+        </div>
+  </div>
+  <div class="column">
+    <div class="section-container">
+          <div class="section-header text-center" style="background-color:#343a40;">Sourcing charges</div>
+          <div class="section-body">
+            <div class="row">
+  <div class="col-md-12">
+    <label for="sourcing-from">Sourcing from:</label>
+    <div class="input-group">
+      <div class="input-group-prepend">
+        <span class="input-group-text">
+          <img class="flag-icon" id="sourcing-flag" alt="Sourcing Flag">
+        </span>
+      </div>
+      <select class="custom-select flag-dropdown" id="sourcing-from" name="sourcing-from" onchange="updateSourcingFlagIcon()">
+        <option value="Morocco" data-image="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Flag_of_Morocco.svg/165px-Flag_of_Morocco.svg.png">Morocco</option>
+        <option value="China" data-image="https://upload.wikimedia.org/wikipedia/commons/thumb/f/fa/Flag_of_the_People%27s_Republic_of_China.svg/165px-Flag_of_the_People%27s_Republic_of_China.svg.png">China</option>
+        <option value="Dubai" data-image="fhttps://upload.wikimedia.org/wikipedia/commons/thumb/c/cb/Flag_of_the_United_Arab_Emirates.svg/165px-Flag_of_the_United_Arab_Emirates.svg.png">Dubai</option>
+		<option value="Turkey" data-image="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b4/Flag_of_Turkey.svg/165px-Flag_of_Turkey.svg.png">Turkey</option>
+      </select>
+    </div>
+  </div>
+</div>
+
+            <div class="row">
+              <div class="col-md-6">
+                <label for="shipping-mode">Shipping Mode:</label>
+                <select class="form-control" id="shipping-mode">
+                  <option value="Express">Express</option>
+                  <option value="Standard">Standard</option>
+                </select>
+              </div>
+			  
+			  <div class="col-md-6 currency-input">
+                <label for="stock">Stock :</label>
+				<span class="currency-symbol">Pcs</span>
+                <input class="form-control input-field" type="number" style="padding-left: 60px;" id="stock" name="stock" value="100" placeholder="Pcs" required>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6 currency-input">
+                <label for="product-cost">Product Cost:</label>
+				<span class="currency-symbol">MAD</span>
+                <input class="form-control input-field" style="padding-left: 75px;" type="number" id="product-cost" name="productCost" value="50" required>
+              </div>
+				<div class="col-md-6 currency-input">
+                <label for="product-weight">Product Weight:</label>
+				<span class="currency-symbol">Gr</span>
+                <input type="text" class="form-control input-field" id="product-weight" name="productWeight" value="200" placeholder="Gr" required>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6 currency-input">
+			  <span class="currency-symbol">%</span>
+                <label for="swap">Swap:</label>
+                <input class="form-control input-field" type="number" id="swap" name="swap" value="1" required>
+              </div>
+			  <div class="col-md-6">
+                <label for="stock-funded">Funded by Shipsen:</label>
+                <select class="form-control" id="stock-funded" name="stockfunded">
+                  <option value="Yes">Yes</option>
+                  <option value="No" selected>No</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+  </div>
+  <div class="column">
+    <div class="section-container">
+          <div class="section-header text-center" style="background-color:#343a40;">Advertising & Other charges</div>
+          <div class="section-body">
+            <div class="row">
+              <div class="col-md-6 currency-input">
+                <label for="lead-cost">Cost per Lead (SCALING):</label>
+				<span class="currency-symbol">$</span>
+                <input class="form-control input-field" type="text" id="lead-cost" name="leadCost" pattern="[0-9]+([,.][0-9]+)?" value="2" required>
+              </div>
+              <div class="col-md-6 currency-input">
+                <label for="ads-test">Facebook Ads Test:</label>
+				<span class="currency-symbol">$</span>
+                <input class="form-control input-field" type="text" id="ads-test" name="adsTest" value="0" required>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6 currency-input">
+                <label for="store-fees">Store Fees:</label>
+				<span class="currency-symbol">$</span>
+                <input class="form-control input-field" type="text" id="store-fees" name="storeFees" value="0" required>
+              </div>
+              <div class="col-md-6 currency-input">
+                <label for="other-fees">Other Fees:</label>
+				<span class="currency-symbol">$</span>
+                <input class="form-control input-field" type="text" id="other-fees" name="otherFees" value="0" required>
+              </div>
+            </div>
+            <div class="row">
+				<div class="col-md-6" hidden>
+				  <label for="shipsen-subscription">Shipsen Subscription:</label>
+				  <select class="form-control" id="shipsen-subscription" name="shipsenSubscription">
+					<option value="Yes">Yes</option>
+					<option value="No" selected>No</option>
+				  </select>
+				</div>
+
+              <div class="col-md-6 currency-input">
+                <label for="exchange-rate">USD convert to MAD:</label>
+				<span class="currency-symbol">MAD</span>
+                <input class="form-control input-field" style="padding-left: 70px;" type="text" id="exchange-rate" name="exchangeRate" pattern="[0-9]+([,.][0-9]+)?" value="10.5" oninput="setDefaultExchangeRate()" required>
+              </div>
+            </div>
+          </div>
+        </div>
+  </div>
+  
+</div>
+<div class="form-group">
+  <button type="submit" class="btn btn-primary calculate-button">
+    <span class="icon"><i class="fas fa-calculator"></i></span>
+    Calculate
+  </button>
+</div>
+</form>
+
+<div class="container-flex">
+
+<div id="results-table">
+  
+    <div class="section-container">
+      <div class="section-body">
+        <table class="table table-bordered">
+          <thead class="thead-dark">
+            <tr>
+              <th>Budget to invest</th>
+              <th>Swap</th>
+			  <th>Net Profit / Product</th>
+              <th>Net Profit</th>
+              <th>ROI (%)</th>
+              <th>Break Even (Pcs)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td id="budget-mad"></td>
+              <td id="swap-mad"></td>
+			  <td id="net-profit-perproduct-mad"></td>
+              <td id="net-profit-mad"></td>
+              <td id="roi-mad"></td>
+              <td id="break-even-mad"></td>
+            </tr>
+            <tr>
+              <td id="budget-usd"></td>
+              <td id="swap-usd"></td>
+			  <td id="net-profit-perproduct-usd"></td>
+              <td id="net-profit-usd"></td>
+              <td id="roi-usd"></td>
+              <td id="break-even-usd"></td>
+            </tr>
+          </tbody>
+        </table>
+		
+      </div>
+<table class="table table-bordered" style="width: 40%; margin: 0 auto;">
+  <thead class="thead-dark" style="text-align: center;">
+    <tr>
+      <th style="width: 40%;">Minimum Selling Price</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td id="minimum-selling-price" style="text-align: center; color: red; font-weight: bold; width: 40%;"></td>
+    </tr>
+  </tbody>
+</table>
+    </div>
+    <div class="section-container">
+      <div class="section-header text-center" style="background-color:#4285f4;">Details of Fees & Charges</div>
+      <div class="section-body">
+        <table id="details-table" class="table table-bordered">
+          <thead>
+            <tr>
+              <th>Shipsen fees *By country</th>
+              <th>Amount (CFA)</th>
+              <th>Amount (MAD)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td id="cfaHead">CFA</td>
+              <td id="cfa-rate"></td>
+              <td id="cfa-rate-mad"></td>
+            </tr>
+            <tr>
+              <td>Confirmation fees</td>
+              <td id="confirmation-fees"></td>
+              <td id="confirmation-fees-mad"></td>
+            </tr>
+            <tr>
+              <td>Delivery fees</td>
+              <td id="delivery-fees"></td>
+              <td id="delivery-fees-mad"></td>
+            </tr>
+            <tr>
+              <td>Lead fees</td>
+              <td id="lead-fees"></td>
+              <td id="lead-fees-mad"></td>
+            </tr>
+            <tr>
+              <td>COD VAT (10%)</td>
+              <td id="cod-vat"></td>
+              <td id="cod-vat-mad"></td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div id="shipsen-charges">
+          <table class="table table-bordered">
+            <thead class="thead-dark">
+              <tr>
+                <th>Total Shipsen charges</th>
+                <th>Amount (CFA)</th>
+                <th>Amount (MAD)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Product cost</td>
+                <td id="product-cost-details"></td>
+                <td id="product-cost-details-mad"></td>
+              </tr>
+              <tr>
+                <td>Transport/Clearance</td>
+                <td id="transport-clearance-details"></td>
+                <td id="transport-clearance-details-mad"></td>
+              </tr>
+              <tr>
+                <td>Confirmation fees</td>
+                <td id="confirmation-fees-details"></td>
+                <td id="confirmation-fees-details-mad"></td>
+              </tr>
+              <tr>
+                <td>Delivery fees</td>
+                <td id="delivery-fees-details"></td>
+                <td id="delivery-fees-details-mad"></td>
+              </tr>
+              <tr>
+                <td>Leads fees</td>
+                <td id="leads-fees-details"></td>
+                <td id="leads-fees-details-mad"></td>
+              </tr>
+              <tr>
+                <td>COD VAT (10%)</td>
+                <td id="cod-vat-details"></td>
+                <td id="cod-vat-details-mad"></td>
+              </tr>
+              <tr>
+                <td><b>TOTAL</b></td>
+                <td id="shipsen-total-charges" style="font-weight: bold;"></td>
+                <td id="shipsen-total-charges-mad" style="font-weight: bold;"></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div id="seller-charges">
+          <table class="table table-bordered">
+            <thead class="thead-dark">
+              <tr>
+                <th>Total Seller charges</th>
+                <th>Amount (USD)</th>
+                <th>Amount (CFA)</th>
+                <th>Amount (MAD)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Product cost</td>
+                <td id="seller-product-cost-details-usd"></td>
+                <td id="seller-product-cost-details"></td>
+                <td id="seller-product-cost-details-mad"></td>
+              </tr>
+              <tr>
+                <td>Facebook Ads</td>
+                <td id="seller-facebook-ads-charges-usd"></td>
+                <td id="seller-facebook-ads-charges"></td>
+                <td id="seller-facebook-ads-charges-mad"></td>
+              </tr>
+              <tr>
+                <td>Store Fees</td>
+                <td id="store-fees-usd"></td>
+                <td id="store-fees-cfa"></td>
+                <td id="store-fees-mad"></td>
+              </tr>
+              <tr>
+                <td>Other charges</td>
+                <td id="seller-other-charges-usd"></td>
+                <td id="seller-other-charges"></td>
+                <td id="seller-other-charges-mad"></td>
+              </tr>
+              <tr>
+                <td><b>TOTAL</b></td>
+                <td id="seller-total-charges-usd" style="font-weight: bold;"></td>
+                <td id="seller-total-charges" style="font-weight: bold;"></td>
+                <td id="seller-total-charges-mad" style="font-weight: bold;"></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+</body>
+<footer class="footer">
+    <p class="footer-text">
+        Copyright © 2024 All rights reserved |
+        <a href="https://www.shipsen.com">Shipsen.com</a>
+    </p>
+    <p class="footer-text">
+        <span class="heart-symbol">&#10084;</span>
+        Made with love by: Community
+    </p>
+
+</footer>
+</html>
+<script>
+    document.getElementById('simulator-form').addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      calculateResults();
+      calculateShippingPrice();
+    });
+
+    function calculateResults() {
+      // Retrieve the form values
+	  const confirmationRate = parseFloat(document.getElementById('confirmation-rate').value);
+	  const deliveryRate = parseFloat(document.getElementById('delivery-rate').value);
+      const leadCost = parseFloat(document.getElementById('lead-cost').value);
+      const stock = parseInt(document.getElementById('stock').value);
+      const productWeight = parseInt(document.getElementById('product-weight').value);
+      const productCost = parseFloat(document.getElementById('product-cost').value);
+      const sellingPrice = parseFloat(document.getElementById('selling-price').value);
+      const country = document.getElementById('country').value;
+	  const swap = document.getElementById('swap').value;
+	 
+
+	  const confirmationDeliveryCoeff = (100/confirmationRate)*(100/deliveryRate);
+	 
+      // Calculate product cost
+      const productCostTotal = productCost * stock;
+
+      // Calculate total weight of products (kg)
+      const totalWeight = productWeight * stock / 1000;
+	  
+	  // Calculate total sells
+	  const totalSells = sellingPrice*stock;
+
+      // Calculate Shipsen fees based on country
+      let cfaAmount, confirmationFees, deliveryFees, leadFees, codVAT, currency;
+
+      if (country === 'Senegal' || country === 'Cote d\'Ivoire' || country === 'Mali' || country === 'Burkina') {
+        cfaAmount = 66;
+        confirmationFees = 1000;
+        deliveryFees = 3000;
+        leadFees = 100;
+        subscriptionFees = 65000;
+        codVAT = 0.1; // 10%
+        currency = 'XAF';
+      } else if (country === 'Gabon') {
+        cfaAmount = 71;
+        confirmationFees = 2000;
+        deliveryFees = 4000;
+        leadFees = 100;
+        subscriptionFees = 71000;
+        codVAT = 0.1; // 10%
+        currency = 'XOF';
+      } else if (country === 'Cameroun' || country === 'Argentina') {
+        cfaAmount = 70;
+        confirmationFees = 1000;
+        deliveryFees = 3000;
+        leadFees = 100;
+        subscriptionFees = 60000;
+        codVAT = 0.1; // 10%
+        currency = 'XOF';
+      }else if (country === 'Guinea') {
+		tauxGNF = 16.3;
+		cfaAmount = 66*tauxGNF;
+        confirmationFees = 1349.7*tauxGNF;
+        deliveryFees = 3680.99*tauxGNF;
+        leadFees = 104.3*tauxGNF;
+        subscriptionFees = 67484.7*tauxGNF;
+        codVAT = 0.1; // 10%
+        currency = 'GNF';
+	  }
+	  else if (country === 'Gambia') {
+		tauxGMD = 9.3;
+		cfaAmount = (66/tauxGMD).toFixed(2);
+        confirmationFees = (1209/tauxGMD).toFixed(2);
+        deliveryFees = (3627/tauxGMD).toFixed(2);
+        leadFees = (120.9/tauxGMD).toFixed(2);
+        subscriptionFees = (65100/tauxGMD).toFixed(2);
+        codVAT = 0.1; // 10%
+        currency = 'GMD';
+	  }else if (country === 'Congo Kinshasa') {
+		cfaAmount = 9;
+        confirmationFees = 4;
+        deliveryFees = 6.5;
+        leadFees = 0.20;
+        subscriptionFees = 100;
+        codVAT = 0.1; // 10%
+        currency = 'USD';
+	  }
+
+
+if (country == "Congo Kinshasa"){
+      // Update the table with the calculated values
+      document.getElementById('cfa-rate').textContent = '1 ' + currency;
+      document.getElementById('cfa-rate-mad').textContent = cfaAmount + ' MAD';
+      document.getElementById('confirmation-fees').textContent = parseInt(confirmationFees) + ' ' + currency;
+      document.getElementById('confirmation-fees-mad').textContent = parseInt(confirmationFees * cfaAmount) + ' MAD';
+      document.getElementById('delivery-fees').textContent = (deliveryFees) + ' ' + currency;
+      document.getElementById('delivery-fees-mad').textContent = parseInt(deliveryFees * cfaAmount) + ' MAD';
+      document.getElementById('lead-fees').textContent = (leadFees) + ' ' + currency;
+      document.getElementById('lead-fees-mad').textContent = (leadFees * cfaAmount) + ' MAD';
+	  document.getElementById('cod-vat').textContent = (sellingPrice * codVAT).toFixed(2) + ' ' + currency;
+      document.getElementById('cod-vat-mad').textContent = parseInt((sellingPrice * codVAT)*cfaAmount).toFixed(2) + ' MAD';}
+	  else {
+	  document.getElementById('cfa-rate').textContent = cfaAmount + ' ' + currency;
+      document.getElementById('cfa-rate-mad').textContent = '1 MAD';
+      document.getElementById('confirmation-fees').textContent = parseInt(confirmationFees) + ' ' + currency;
+      document.getElementById('confirmation-fees-mad').textContent = parseInt(confirmationFees / cfaAmount) + ' MAD';
+      document.getElementById('delivery-fees').textContent = (deliveryFees) + ' ' + currency;
+      document.getElementById('delivery-fees-mad').textContent = parseInt(deliveryFees / cfaAmount) + ' MAD';
+      document.getElementById('lead-fees').textContent = (leadFees) + ' ' + currency;
+      document.getElementById('lead-fees-mad').textContent = (leadFees / cfaAmount).toFixed(2) + ' MAD';
+	  document.getElementById('cod-vat').textContent = (sellingPrice * codVAT).toFixed(2) + ' ' + currency;
+      document.getElementById('cod-vat-mad').textContent = parseInt(sellingPrice * codVAT / cfaAmount).toFixed(2) + ' MAD';
+	  }
+
+	  
+	  // Get the select element
+var selectProductcost = document.getElementById("stock-funded");
+
+// Get the selected value
+var selectedValueproduct = selectProductcost.value;
+
+
+
+if (country == "Congo Kinshasa"){
+	if (selectedValueproduct == "Yes") {
+	document.getElementById('product-cost-details').textContent = (productCostTotal/cfaAmount).toFixed(2) + ' ' + currency;
+	document.getElementById('product-cost-details-mad').textContent = productCostTotal + ' MAD';
+	
+} 
+else{
+	document.getElementById('product-cost-details').textContent = '0 ' + currency;
+	document.getElementById('product-cost-details-mad').textContent = '0 MAD';
+}
+}else{
+if (selectedValueproduct == "Yes") {
+	document.getElementById('product-cost-details').textContent = (productCostTotal*cfaAmount).toFixed(2) + ' ' + currency;
+	document.getElementById('product-cost-details-mad').textContent = productCostTotal + ' MAD';
+	
+} 
+else{
+	document.getElementById('product-cost-details').textContent = '0 ' + currency;
+	document.getElementById('product-cost-details-mad').textContent = '0 MAD';
+}	
+}
+
+
+
+
+	  
+	  const confirmationfees = document.getElementById('confirmation-fees-details').textContent = (confirmationFees * (stock-swap*stock/100)) + ' ' + currency;
+	  const deliveryfees = document.getElementById('delivery-fees-details').textContent = (deliveryFees * (stock-swap*stock/100)).toFixed(2) + ' ' + currency;
+	  const leadsfees = document.getElementById('leads-fees-details').textContent = (leadFees * stock * confirmationDeliveryCoeff).toFixed(2) + ' ' + currency;
+	  
+	  if (country == "Congo Kinshasa") {
+		  const confirmationfeesMad = document.getElementById('confirmation-fees-details-mad').textContent = ((confirmationFees * (stock-swap*stock/100))*cfaAmount).toFixed(2) + ' MAD';
+		  const deliveryfeesMad = document.getElementById('delivery-fees-details-mad').textContent = ((deliveryFees * (stock-swap*stock/100))*cfaAmount).toFixed(2) + ' MAD';
+		  const leadsfeesMad = document.getElementById('leads-fees-details-mad').textContent = ((leadFees*stock*confirmationDeliveryCoeff)*cfaAmount).toFixed(2) + ' MAD';
+		  const  codvatfeesMad = document.getElementById('cod-vat-details-mad').textContent = ((totalSells * codVAT)*cfaAmount).toFixed(2) + ' MAD';
+	}else{
+		const confirmationfeesMad = document.getElementById('confirmation-fees-details-mad').textContent = ((confirmationFees * (stock-swap*stock/100))/cfaAmount).toFixed(2) + ' MAD';
+		const deliveryfeesMad = document.getElementById('delivery-fees-details-mad').textContent = ((deliveryFees * (stock-swap*stock/100))/cfaAmount).toFixed(2) + ' MAD';
+		const leadsfeesMad = document.getElementById('leads-fees-details-mad').textContent = ((leadFees*stock*confirmationDeliveryCoeff)/cfaAmount).toFixed(2) + ' MAD';
+		const  codvatfeesMad = document.getElementById('cod-vat-details-mad').textContent = (totalSells * codVAT/cfaAmount).toFixed(2) + ' MAD';
+	}
+	  
+	  
+	  
+	  const codvatfees = document.getElementById('cod-vat-details').textContent = totalSells * codVAT + ' ' + currency;
+    }
+
+  </script>
+  <script>
+  // Define the transport/clearance amounts based on country, sourcing from, and shipping mode
+const transportClearanceAmounts = [
+  { country: "Senegal", sourcingFrom: "Morocco", shippingMode: "Standard", amount: 2310 },
+  { country: "Senegal", sourcingFrom: "Morocco", shippingMode: "Standard", amountMAD: 33 },
+  { country: "Senegal", sourcingFrom: "Morocco", shippingMode: "Express", amount: 4620 },
+  { country: "Senegal", sourcingFrom: "Morocco", shippingMode: "Express", amountMAD: 70 },
+  { country: "Senegal", sourcingFrom: "Dubai", shippingMode: "Standard", amount: 8500 },
+  { country: "Senegal", sourcingFrom: "Dubai", shippingMode: "Standard", amountMAD: 129 },
+  { country: "Senegal", sourcingFrom: "Dubai", shippingMode: "Express", amount: 8500 },
+  { country: "Senegal", sourcingFrom: "Dubai", shippingMode: "Express", amountMAD: 129 },
+  { country: "Senegal", sourcingFrom: "Turkey", shippingMode: "Standard", amount: 8500 },
+  { country: "Senegal", sourcingFrom: "Turkey", shippingMode: "Standard", amountMAD: 129 },
+  { country: "Senegal", sourcingFrom: "Turkey", shippingMode: "Express", amount: 8500 },
+  { country: "Senegal", sourcingFrom: "Turkey", shippingMode: "Express", amountMAD: 129 },
+  { country: "Senegal", sourcingFrom: "China", shippingMode: "Standard", amount: 9500 },
+  { country: "Senegal", sourcingFrom: "China", shippingMode: "Standard", amountMAD: 144 },
+  { country: "Senegal", sourcingFrom: "China", shippingMode: "Express", amount: 12000 },
+  { country: "Senegal", sourcingFrom: "China", shippingMode: "Express", amountMAD: 182 },
+  
+  { country: "Cote d'Ivoire", sourcingFrom: "Morocco", shippingMode: "Standard", amount: 2310 },
+  { country: "Cote d'Ivoire", sourcingFrom: "Morocco", shippingMode: "Standard", amountMAD: 35 },
+  { country: "Cote d'Ivoire", sourcingFrom: "Morocco", shippingMode: "Express", amount: 5280 },
+  { country: "Cote d'Ivoire", sourcingFrom: "Morocco", shippingMode: "Express", amountMAD: 80 },
+  { country: "Cote d'Ivoire", sourcingFrom: "Dubai", shippingMode: "Standard", amount: 8500 },
+  { country: "Cote d'Ivoire", sourcingFrom: "Dubai", shippingMode: "Standard", amountMAD: 129 },
+  { country: "Cote d'Ivoire", sourcingFrom: "Dubai", shippingMode: "Express", amount: 8500 },
+  { country: "Cote d'Ivoire", sourcingFrom: "Dubai", shippingMode: "Express", amountMAD: 129 },
+  { country: "Cote d'Ivoire", sourcingFrom: "Turkey", shippingMode: "Standard", amount: 8500 },
+  { country: "Cote d'Ivoire", sourcingFrom: "Turkey", shippingMode: "Standard", amountMAD: 129 },
+  { country: "Cote d'Ivoire", sourcingFrom: "Turkey", shippingMode: "Express", amount: 8500 },
+  { country: "Cote d'Ivoire", sourcingFrom: "Turkey", shippingMode: "Express", amountMAD: 129 },
+  { country: "Cote d'Ivoire", sourcingFrom: "China", shippingMode: "Standard", amount: 9000 },
+  { country: "Cote d'Ivoire", sourcingFrom: "China", shippingMode: "Standard", amountMAD: 136 },
+  { country: "Cote d'Ivoire", sourcingFrom: "China", shippingMode: "Express", amount: 12000 },
+  { country: "Cote d'Ivoire", sourcingFrom: "China", shippingMode: "Express", amountMAD: 182 },
+  
+  { country: "Burkina", sourcingFrom: "Morocco", shippingMode: "Standard", amount: 2310 },
+  { country: "Burkina", sourcingFrom: "Morocco", shippingMode: "Express", amount: 5280 },
+  { country: "Burkina", sourcingFrom: "Dubai", shippingMode: "Standard", amount: 8500 },
+  { country: "Burkina", sourcingFrom: "Dubai", shippingMode: "Express", amount: 8500 },
+  { country: "Burkina", sourcingFrom: "Turkey", shippingMode: "Standard", amount: 8500 },
+  { country: "Burkina", sourcingFrom: "Turkey", shippingMode: "Express", amount: 8500 },
+  { country: "Burkina", sourcingFrom: "China", shippingMode: "Standard", amount: 10000 },
+  { country: "Burkina", sourcingFrom: "China", shippingMode: "Express", amount: 10000 },
+  { country: "Burkina", sourcingFrom: "Morocco", shippingMode: "Standard", amountMAD: 35 },
+  { country: "Burkina", sourcingFrom: "Morocco", shippingMode: "Express", amountMAD: 80 },
+  { country: "Burkina", sourcingFrom: "Dubai", shippingMode: "Standard", amountMAD: 129 },
+  { country: "Burkina", sourcingFrom: "Dubai", shippingMode: "Express", amountMAD: 129 },
+  { country: "Burkina", sourcingFrom: "Turkey", shippingMode: "Standard", amountMAD: 129 },
+  { country: "Burkina", sourcingFrom: "Turkey", shippingMode: "Express", amountMAD: 129 },
+  { country: "Burkina", sourcingFrom: "China", shippingMode: "Standard", amountMAD: 152 },
+  { country: "Burkina", sourcingFrom: "China", shippingMode: "Express", amountMAD: 152 },
+  
+  { country: "Mali", sourcingFrom: "Morocco", shippingMode: "Standard", amount: 2000 },
+  { country: "Mali", sourcingFrom: "Morocco", shippingMode: "Express", amount: 5280 },
+  { country: "Mali", sourcingFrom: "Dubai", shippingMode: "Standard", amount: 8500 },
+  { country: "Mali", sourcingFrom: "Dubai", shippingMode: "Express", amount: 8500 },
+  { country: "Mali", sourcingFrom: "Turkey", shippingMode: "Standard", amount: 6500 },
+  { country: "Mali", sourcingFrom: "Turkey", shippingMode: "Express", amount: 6500 },
+  { country: "Mali", sourcingFrom: "China", shippingMode: "Standard", amount: 12000 },
+  { country: "Mali", sourcingFrom: "China", shippingMode: "Express", amount: 12000 },
+  { country: "Mali", sourcingFrom: "Morocco", shippingMode: "Standard", amountMAD: 30 },
+  { country: "Mali", sourcingFrom: "Morocco", shippingMode: "Express", amountMAD: 80 },
+  { country: "Mali", sourcingFrom: "Dubai", shippingMode: "Standard", amountMAD: 129 },
+  { country: "Mali", sourcingFrom: "Dubai", shippingMode: "Express", amountMAD: 129 },
+  { country: "Mali", sourcingFrom: "Turkey", shippingMode: "Standard", amountMAD: 99 },
+  { country: "Mali", sourcingFrom: "Turkey", shippingMode: "Express", amountMAD: 99 },
+  { country: "Mali", sourcingFrom: "China", shippingMode: "Standard", amountMAD: 182 },
+  { country: "Mali", sourcingFrom: "China", shippingMode: "Express", amountMAD: 182 },
+  
+  { country: "Cameroun", sourcingFrom: "Morocco", shippingMode: "Express", amount: 7700 },
+  { country: "Cameroun", sourcingFrom: "Dubai", shippingMode: "Standard", amount: 9570 },
+  { country: "Cameroun", sourcingFrom: "Dubai", shippingMode: "Express", amount: 9570 },
+  { country: "Cameroun", sourcingFrom: "Turkey", shippingMode: "Standard", amount: 7500 },
+  { country: "Cameroun", sourcingFrom: "Turkey", shippingMode: "Express", amount: 7500 },
+  { country: "Cameroun", sourcingFrom: "China", shippingMode: "Standard", amount: 9500 },
+  { country: "Cameroun", sourcingFrom: "China", shippingMode: "Express", amount: 9500 },
+  { country: "Cameroun", sourcingFrom: "Morocco", shippingMode: "Express", amountMAD: 110 },
+  { country: "Cameroun", sourcingFrom: "Dubai", shippingMode: "Standard", amountMAD: 137 },
+  { country: "Cameroun", sourcingFrom: "Dubai", shippingMode: "Express", amountMAD: 137 },
+  { country: "Cameroun", sourcingFrom: "Turkey", shippingMode: "Standard", amountMAD: 107 },
+  { country: "Cameroun", sourcingFrom: "Turkey", shippingMode: "Express", amountMAD: 107 },
+  { country: "Cameroun", sourcingFrom: "China", shippingMode: "Standard", amountMAD: 136 },
+  { country: "Cameroun", sourcingFrom: "China", shippingMode: "Express", amountMAD: 136 },
+  
+  { country: "Argentina", sourcingFrom: "Morocco", shippingMode: "Express", amount: 7700 },
+  { country: "Argentina", sourcingFrom: "Dubai", shippingMode: "Standard", amount: 9570 },
+  { country: "Argentina", sourcingFrom: "Dubai", shippingMode: "Express", amount: 9570 },
+  { country: "Argentina", sourcingFrom: "Turkey", shippingMode: "Standard", amount: 7500 },
+  { country: "Argentina", sourcingFrom: "Turkey", shippingMode: "Express", amount: 7500 },
+  { country: "Argentina", sourcingFrom: "China", shippingMode: "Standard", amount: 9000 },
+  { country: "Argentina", sourcingFrom: "China", shippingMode: "Express", amount: 12000 },
+  { country: "Argentina", sourcingFrom: "Morocco", shippingMode: "Express", amountMAD: 110 },
+  { country: "Argentina", sourcingFrom: "Dubai", shippingMode: "Standard", amountMAD: 137 },
+  { country: "Argentina", sourcingFrom: "Dubai", shippingMode: "Express", amountMAD: 137 },
+  { country: "Argentina", sourcingFrom: "Turkey", shippingMode: "Standard", amountMAD: 107 },
+  { country: "Argentina", sourcingFrom: "Turkey", shippingMode: "Express", amountMAD: 107 },
+  { country: "Argentina", sourcingFrom: "China", shippingMode: "Standard", amountMAD: 129 },
+  { country: "Argentina", sourcingFrom: "China", shippingMode: "Express", amountMAD: 172 },
+  
+  { country: "Gabon", sourcingFrom: "Morocco", shippingMode: "Express", amount: 7810 },
+  { country: "Gabon", sourcingFrom: "Dubai", shippingMode: "Standard", amount: 11500 },
+  { country: "Gabon", sourcingFrom: "Dubai", shippingMode: "Express", amount: 11500 },
+  { country: "Gabon", sourcingFrom: "Turkey", shippingMode: "Standard", amount: 7500 },
+  { country: "Gabon", sourcingFrom: "Turkey", shippingMode: "Express", amount: 7500 },
+  { country: "Gabon", sourcingFrom: "China", shippingMode: "Standard", amount: 12000 },
+  { country: "Gabon", sourcingFrom: "China", shippingMode: "Express", amount: 14000 },
+  { country: "Gabon", sourcingFrom: "Morocco", shippingMode: "Express", amountMAD: 110 },
+  { country: "Gabon", sourcingFrom: "Dubai", shippingMode: "Standard", amountMAD: 162 },
+  { country: "Gabon", sourcingFrom: "Dubai", shippingMode: "Express", amountMAD: 162 },
+  { country: "Gabon", sourcingFrom: "Turkey", shippingMode: "Standard", amountMAD: 106 },
+  { country: "Gabon", sourcingFrom: "Turkey", shippingMode: "Express", amountMAD: 106 },
+  { country: "Gabon", sourcingFrom: "China", shippingMode: "Standard", amountMAD: 169 },
+  { country: "Gabon", sourcingFrom: "China", shippingMode: "Express", amountMAD: 197 },
+  
+  { country: "Congo Kinshasa", sourcingFrom: "Morocco", shippingMode: "Express", amount: 10.5 },
+  { country: "Congo Kinshasa", sourcingFrom: "Dubai", shippingMode: "Standard", amount: 18 },
+  { country: "Congo Kinshasa", sourcingFrom: "Dubai", shippingMode: "Express", amount: 18 },
+  { country: "Congo Kinshasa", sourcingFrom: "Turkey", shippingMode: "Standard", amount: 18 },
+  { country: "Congo Kinshasa", sourcingFrom: "Turkey", shippingMode: "Express", amount: 18 },
+  { country: "Congo Kinshasa", sourcingFrom: "China", shippingMode: "Standard", amount: 17 },
+  { country: "Congo Kinshasa", sourcingFrom: "China", shippingMode: "Express", amount: 20 },
+  { country: "Congo Kinshasa", sourcingFrom: "Morocco", shippingMode: "Express", amountMAD: 110 },
+  { country: "Congo Kinshasa", sourcingFrom: "Dubai", shippingMode: "Standard", amountMAD: 190 },
+  { country: "Congo Kinshasa", sourcingFrom: "Dubai", shippingMode: "Express", amountMAD: 190 },
+  { country: "Congo Kinshasa", sourcingFrom: "Turkey", shippingMode: "Standard", amountMAD: 190 },
+  { country: "Congo Kinshasa", sourcingFrom: "Turkey", shippingMode: "Express", amountMAD: 190 },
+  { country: "Congo Kinshasa", sourcingFrom: "China", shippingMode: "Standard", amountMAD: 180 },
+  { country: "Congo Kinshasa", sourcingFrom: "China", shippingMode: "Express", amountMAD: 208 },
+  
+  { country: "Guinea", sourcingFrom: "Morocco", shippingMode: "Express", amount: 86064 },
+  { country: "Guinea", sourcingFrom: "Dubai", shippingMode: "Standard", amount: 155991 },
+  { country: "Guinea", sourcingFrom: "Dubai", shippingMode: "Express", amount: 155991 },
+  { country: "Guinea", sourcingFrom: "Turkey", shippingMode: "Standard", amount: 122250 },
+  { country: "Guinea", sourcingFrom: "Turkey", shippingMode: "Express", amount: 122250 },
+  { country: "Guinea", sourcingFrom: "China", shippingMode: "Standard", amount: 179300 },
+  { country: "Guinea", sourcingFrom: "China", shippingMode: "Express", amount: 179300 },
+  { country: "Guinea", sourcingFrom: "Morocco", shippingMode: "Express", amountMAD: 80 },
+  { country: "Guinea", sourcingFrom: "Dubai", shippingMode: "Standard", amountMAD: 145 },
+  { country: "Guinea", sourcingFrom: "Dubai", shippingMode: "Express", amountMAD: 145 },
+  { country: "Guinea", sourcingFrom: "Turkey", shippingMode: "Standard", amountMAD: 114 },
+  { country: "Guinea", sourcingFrom: "Turkey", shippingMode: "Express", amountMAD: 114 },
+  { country: "Guinea", sourcingFrom: "China", shippingMode: "Standard", amountMAD: 167 },
+  { country: "Guinea", sourcingFrom: "China", shippingMode: "Express", amountMAD: 167 },
+  
+  { country: "Gambia", sourcingFrom: "Morocco", shippingMode: "Express", amount: 604 },
+  { country: "Gambia", sourcingFrom: "Dubai", shippingMode: "Standard", amount: 914 },
+  { country: "Gambia", sourcingFrom: "Dubai", shippingMode: "Express", amount: 914 },
+  { country: "Gambia", sourcingFrom: "Turkey", shippingMode: "Standard", amount: 387 },
+  { country: "Gambia", sourcingFrom: "Turkey", shippingMode: "Express", amount: 387 },
+  { country: "Gambia", sourcingFrom: "China", shippingMode: "Standard", amount: 1022 },
+  { country: "Gambia", sourcingFrom: "China", shippingMode: "Express", amount: 1022 },
+  { country: "Gambia", sourcingFrom: "Morocco", shippingMode: "Express", amountMAD: 85 },
+  { country: "Gambia", sourcingFrom: "Dubai", shippingMode: "Standard", amountMAD: 129 },
+  { country: "Gambia", sourcingFrom: "Dubai", shippingMode: "Express", amountMAD: 129 },
+  { country: "Gambia", sourcingFrom: "Turkey", shippingMode: "Standard", amountMAD: 55 },
+  { country: "Gambia", sourcingFrom: "Turkey", shippingMode: "Express", amountMAD: 55 },
+  { country: "Gambia", sourcingFrom: "China", shippingMode: "Standard", amountMAD: 144 },
+  { country: "Gambia", sourcingFrom: "China", shippingMode: "Express", amountMAD: 144 },
+];
+
+const transportClearanceAmountsMAD = [
+  { country: "Senegal", sourcingFrom: "Morocco", shippingMode: "Standard", amountMAD: 33 },
+  { country: "Senegal", sourcingFrom: "Morocco", shippingMode: "Express", amountMAD: 70 },
+  { country: "Senegal", sourcingFrom: "Dubai", shippingMode: "Standard", amountMAD: 129 },
+  { country: "Senegal", sourcingFrom: "Dubai", shippingMode: "Express", amountMAD: 129 },
+  { country: "Senegal", sourcingFrom: "Turkey", shippingMode: "Standard", amountMAD: 129 },
+  { country: "Senegal", sourcingFrom: "Turkey", shippingMode: "Express", amountMAD: 129 },
+  { country: "Senegal", sourcingFrom: "China", shippingMode: "Standard", amountMAD: 144 },
+  { country: "Senegal", sourcingFrom: "China", shippingMode: "Express", amountMAD: 182 },
+  
+  { country: "Cote d'Ivoire", sourcingFrom: "Morocco", shippingMode: "Standard", amountMAD: 35 },
+  { country: "Cote d'Ivoire", sourcingFrom: "Morocco", shippingMode: "Express", amountMAD: 80 },
+  { country: "Cote d'Ivoire", sourcingFrom: "Dubai", shippingMode: "Standard", amountMAD: 129 },
+  { country: "Cote d'Ivoire", sourcingFrom: "Dubai", shippingMode: "Express", amountMAD: 129 },
+  { country: "Cote d'Ivoire", sourcingFrom: "Turkey", shippingMode: "Standard", amountMAD: 129 },
+  { country: "Cote d'Ivoire", sourcingFrom: "Turkey", shippingMode: "Express", amountMAD: 129 },
+  { country: "Cote d'Ivoire", sourcingFrom: "China", shippingMode: "Standard", amountMAD: 136 },
+  { country: "Cote d'Ivoire", sourcingFrom: "China", shippingMode: "Express", amountMAD: 182 },
+  
+  { country: "Burkina", sourcingFrom: "Morocco", shippingMode: "Standard", amountMAD: 35 },
+  { country: "Burkina", sourcingFrom: "Morocco", shippingMode: "Express", amountMAD: 80 },
+  { country: "Burkina", sourcingFrom: "Dubai", shippingMode: "Standard", amountMAD: 129 },
+  { country: "Burkina", sourcingFrom: "Dubai", shippingMode: "Express", amountMAD: 129 },
+  { country: "Burkina", sourcingFrom: "Turkey", shippingMode: "Standard", amountMAD: 129 },
+  { country: "Burkina", sourcingFrom: "Turkey", shippingMode: "Express", amountMAD: 129 },
+  { country: "Burkina", sourcingFrom: "China", shippingMode: "Standard", amountMAD: 152 },
+  { country: "Burkina", sourcingFrom: "China", shippingMode: "Express", amountMAD: 152 },
+  
+  { country: "Mali", sourcingFrom: "Morocco", shippingMode: "Standard", amountMAD: 30 },
+  { country: "Mali", sourcingFrom: "Morocco", shippingMode: "Express", amountMAD: 80 },
+  { country: "Mali", sourcingFrom: "Dubai", shippingMode: "Standard", amountMAD: 129 },
+  { country: "Mali", sourcingFrom: "Dubai", shippingMode: "Express", amountMAD: 129 },
+  { country: "Mali", sourcingFrom: "Turkey", shippingMode: "Standard", amountMAD: 99 },
+  { country: "Mali", sourcingFrom: "Turkey", shippingMode: "Express", amountMAD: 99 },
+  { country: "Mali", sourcingFrom: "China", shippingMode: "Standard", amountMAD: 182 },
+  { country: "Mali", sourcingFrom: "China", shippingMode: "Express", amountMAD: 182 },
+  
+  { country: "Cameroun", sourcingFrom: "Morocco", shippingMode: "Express", amountMAD: 110 },
+  { country: "Cameroun", sourcingFrom: "Dubai", shippingMode: "Standard", amountMAD: 137 },
+  { country: "Cameroun", sourcingFrom: "Dubai", shippingMode: "Express", amountMAD: 137 },
+  { country: "Cameroun", sourcingFrom: "Turkey", shippingMode: "Standard", amountMAD: 107 },
+  { country: "Cameroun", sourcingFrom: "Turkey", shippingMode: "Express", amountMAD: 107 },
+  { country: "Cameroun", sourcingFrom: "China", shippingMode: "Standard", amountMAD: 136 },
+  { country: "Cameroun", sourcingFrom: "China", shippingMode: "Express", amountMAD: 136 },
+  
+  { country: "Argentina", sourcingFrom: "Morocco", shippingMode: "Express", amountMAD: 110 },
+  { country: "Argentina", sourcingFrom: "Dubai", shippingMode: "Standard", amountMAD: 137 },
+  { country: "Argentina", sourcingFrom: "Dubai", shippingMode: "Express", amountMAD: 137 },
+  { country: "Argentina", sourcingFrom: "Turkey", shippingMode: "Standard", amountMAD: 107 },
+  { country: "Argentina", sourcingFrom: "Turkey", shippingMode: "Express", amountMAD: 107 },
+  { country: "Argentina", sourcingFrom: "China", shippingMode: "Standard", amountMAD: 129 },
+  { country: "Argentina", sourcingFrom: "China", shippingMode: "Express", amountMAD: 172 },
+  
+  { country: "Gabon", sourcingFrom: "Morocco", shippingMode: "Express", amountMAD: 110 },
+  { country: "Gabon", sourcingFrom: "Dubai", shippingMode: "Standard", amountMAD: 162 },
+  { country: "Gabon", sourcingFrom: "Dubai", shippingMode: "Express", amountMAD: 162 },
+  { country: "Gabon", sourcingFrom: "Turkey", shippingMode: "Standard", amountMAD: 106 },
+  { country: "Gabon", sourcingFrom: "Turkey", shippingMode: "Express", amountMAD: 106 },
+  { country: "Gabon", sourcingFrom: "China", shippingMode: "Standard", amountMAD: 169 },
+  { country: "Gabon", sourcingFrom: "China", shippingMode: "Express", amountMAD: 197 },
+  
+  { country: "Congo Kinshasa", sourcingFrom: "Morocco", shippingMode: "Express", amountMAD: 110 },
+  { country: "Congo Kinshasa", sourcingFrom: "Dubai", shippingMode: "Standard", amountMAD: 190 },
+  { country: "Congo Kinshasa", sourcingFrom: "Dubai", shippingMode: "Express", amountMAD: 190 },
+  { country: "Congo Kinshasa", sourcingFrom: "Turkey", shippingMode: "Standard", amountMAD: 190 },
+  { country: "Congo Kinshasa", sourcingFrom: "Turkey", shippingMode: "Express", amountMAD: 190 },
+  { country: "Congo Kinshasa", sourcingFrom: "China", shippingMode: "Standard", amountMAD: 180 },
+  { country: "Congo Kinshasa", sourcingFrom: "China", shippingMode: "Express", amountMAD: 208 },
+  
+  { country: "Guinea", sourcingFrom: "Morocco", shippingMode: "Express", amountMAD: 80 },
+  { country: "Guinea", sourcingFrom: "Dubai", shippingMode: "Standard", amountMAD: 145 },
+  { country: "Guinea", sourcingFrom: "Dubai", shippingMode: "Express", amountMAD: 145 },
+  { country: "Guinea", sourcingFrom: "Turkey", shippingMode: "Standard", amountMAD: 114 },
+  { country: "Guinea", sourcingFrom: "Turkey", shippingMode: "Express", amountMAD: 114 },
+  { country: "Guinea", sourcingFrom: "China", shippingMode: "Standard", amountMAD: 167 },
+  { country: "Guinea", sourcingFrom: "China", shippingMode: "Express", amountMAD: 167 },
+  
+  { country: "Gambia", sourcingFrom: "Morocco", shippingMode: "Express", amountMAD: 85 },
+  { country: "Gambia", sourcingFrom: "Dubai", shippingMode: "Standard", amountMAD: 129 },
+  { country: "Gambia", sourcingFrom: "Dubai", shippingMode: "Express", amountMAD: 129 },
+  { country: "Gambia", sourcingFrom: "Turkey", shippingMode: "Standard", amountMAD: 55 },
+  { country: "Gambia", sourcingFrom: "Turkey", shippingMode: "Express", amountMAD: 55 },
+  { country: "Gambia", sourcingFrom: "China", shippingMode: "Standard", amountMAD: 144 },
+  { country: "Gambia", sourcingFrom: "China", shippingMode: "Express", amountMAD: 144 },
+];
+
+
+
+// Handle form submission
+document.getElementById("simulator-form").addEventListener("submit", function(event) {
+  event.preventDefault(); // Prevent form submission
+
+  // Get selected values from the form
+  const confirmationRate = parseFloat(document.getElementById('confirmation-rate').value);
+  const deliveryRate = parseFloat(document.getElementById('delivery-rate').value);
+  const country = document.getElementById("country").value;
+  const sourcingFrom = document.getElementById("sourcing-from").value;
+  const shippingMode = document.getElementById("shipping-mode").value;
+  const stock = parseInt(document.getElementById('stock').value);
+  const productWeight = parseInt(document.getElementById('product-weight').value);
+  const productCost = parseFloat(document.getElementById('product-cost').value);
+  const sellingPrice = parseFloat(document.getElementById('selling-price').value);
+  const leadCost = parseFloat(document.getElementById('lead-cost').value);
+  const exRate = parseFloat(document.getElementById('exchange-rate').value);
+  const otherFees = parseFloat(document.getElementById('other-fees').value);
+  const storeFees = parseFloat(document.getElementById('store-fees').value);
+  const adstest = parseFloat(document.getElementById('ads-test').value);
+  const swapAmount = parseFloat(document.getElementById('swap').value);
+  
+  const confirmationDeliveryCoeff = (100/confirmationRate)*(100/deliveryRate);
+  
+  // Calculate product cost
+      const productCostTotal = productCost * stock;
+
+      // Calculate total weight of products (kg)
+      const totalWeight = productWeight * stock / 1000;
+	  
+	 // Calculate total sells
+	  const totalSells = sellingPrice*(stock-stock*swapAmount/100);
+  
+    let cfaAmount, currency;
+
+      if (country === 'Senegal' || country === 'Cote d\'Ivoire' || country === 'Mali' || country === 'Burkina') {
+        cfaAmount = 66;
+        confirmationFees = 1000;
+        deliveryFees = 3000;
+        leadFees = 100;
+        subscriptionFees = 65000;
+        codVAT = 0.1; // 10%
+        currency = 'XAF';
+      } else if (country === 'Gabon') {
+        cfaAmount = 71;
+        confirmationFees = 2000;
+        deliveryFees = 4000;
+        leadFees = 100;
+        subscriptionFees = 71000;
+        codVAT = 0.1; // 10%
+        currency = 'XOF';
+      } else if (country === 'Cameroun' || country === 'Argentina') {
+        cfaAmount = 70;
+        confirmationFees = 1000;
+        deliveryFees = 3000;
+        leadFees = 100;
+        subscriptionFees = 60000;
+        codVAT = 0.1; // 10%
+        currency = 'XOF';
+      } else if (country === 'Guinea') {
+		tauxGNF = 16.3;
+		cfaAmount = 66*tauxGNF;
+        confirmationFees = 1000*tauxGNF;
+        deliveryFees = 3000*tauxGNF;
+        leadFees = 100*tauxGNF;
+        subscriptionFees = 65000*tauxGNF;
+        codVAT = 0.1; // 10%
+        currency = 'GNF';
+	  }else if (country === 'Gambia') {
+		tauxGMD = 9.3;
+		cfaAmount = (66/tauxGMD).toFixed(2);
+        confirmationFees = (1209/tauxGMD).toFixed(2);
+        deliveryFees = (3627/tauxGMD).toFixed(2);
+        leadFees = (120.9/tauxGMD).toFixed(2);
+        subscriptionFees = (6500/tauxGMD).toFixed(2);
+        codVAT = 0.1; // 10%
+        currency = 'GMD';
+	  }else if (country === 'Congo Kinshasa') {
+		cfaAmount = 9;
+        confirmationFees = 4;
+        deliveryFees = 6.5;
+        leadFees = 0.20;
+        subscriptionFees = 100;
+        codVAT = 0.1; // 10%
+        currency = 'USD';
+	  }
+ 
+
+  // Find the corresponding transport/clearance amount
+  const selectedEntry = transportClearanceAmounts.find(function(entry) {
+    return (
+      entry.country === country &&
+      entry.sourcingFrom === sourcingFrom &&
+      entry.shippingMode === shippingMode 
+    );
+  });
+  
+  
+  if (country === "Congo Kinshasa") {
+    document.getElementById("transport-clearance-details").textContent = (selectedEntry.amount*totalWeight).toFixed(2) + ' ' + currency;
+    document.getElementById("transport-clearance-details-mad").textContent = ((selectedEntry.amount*totalWeight)*exRate).toFixed(2) + ' MAD' ;
+  }else{
+	document.getElementById("transport-clearance-details").textContent = selectedEntry.amount*totalWeight + ' ' + currency;
+    document.getElementById("transport-clearance-details-mad").textContent = ((selectedEntry.amount*totalWeight)/cfaAmount).toFixed(2) + ' MAD' ;
+  }
+	
+  
+
+  // Display the amount in the appropriate table cell
+  if (selectedEntry) {
+		  // Get the select element
+var selectElement = document.getElementById("shipsen-subscription");
+var selectsellerProductcost = document.getElementById("stock-funded");
+
+// Get the selected value
+var selectedValue = selectElement.value;
+var selectedsellerValueproduct = selectsellerProductcost.value;
+
+if (country === "Congo Kinshasa") {
+	if (selectedValue === "Yes" && selectedsellerValueproduct === "Yes") {
+  document.getElementById("shipsen-total-charges").textContent = (productCostTotal/cfaAmount + confirmationFees*(stock-swapAmount*stock/100) + deliveryFees*(stock-swapAmount*stock/100) + 
+	leadFees*stock*confirmationDeliveryCoeff + totalSells*codVAT +
+	selectedEntry.amount*totalWeight).toFixed(2) + ' ' + currency;
+  document.getElementById("shipsen-total-charges-mad").textContent = ((productCostTotal/cfaAmount + confirmationFees*(stock-swapAmount*stock/100) + deliveryFees*(stock-swapAmount*stock/100) + 
+	leadFees*stock*confirmationDeliveryCoeff + totalSells*codVAT + selectedEntry.amount*totalWeight)*cfaAmount).toFixed(2) + ' MAD' ;
+} else if (selectedValue === "No" && selectedsellerValueproduct === "No") {
+  document.getElementById("shipsen-total-charges").textContent = (confirmationFees*(stock-swapAmount*stock/100) + deliveryFees*(stock-swapAmount*stock/100) + 
+	leadFees*stock*confirmationDeliveryCoeff + totalSells*codVAT +
+	selectedEntry.amount*totalWeight).toFixed(2) + ' ' + currency;
+  document.getElementById("shipsen-total-charges-mad").textContent = ((confirmationFees*(stock-swapAmount*stock/100) + deliveryFees*(stock-swapAmount*stock/100) + 
+	leadFees*stock*confirmationDeliveryCoeff + totalSells*codVAT + selectedEntry.amount*totalWeight)*cfaAmount).toFixed(2) + ' MAD' ;
+} else if (selectedValue === "Yes" && selectedsellerValueproduct === "No"){
+	document.getElementById("shipsen-total-charges").textContent = (confirmationFees*(stock-swapAmount*stock/100) + deliveryFees*(stock-swapAmount*stock/100) + 
+ leadFees*stock*confirmationDeliveryCoeff + totalSells*codVAT +
+	selectedEntry.amount*totalWeight).toFixed(2) + ' ' + currency;
+  document.getElementById("shipsen-total-charges-mad").textContent = ((confirmationFees*(stock-swapAmount*stock/100) + deliveryFees*(stock-swapAmount*stock/100) + 
+	leadFees*stock*confirmationDeliveryCoeff + totalSells*codVAT + selectedEntry.amount*totalWeight)*cfaAmount).toFixed(2) + ' MAD' ;
+}else if (selectedValue === "No" && selectedsellerValueproduct === "Yes"){
+	document.getElementById("shipsen-total-charges").textContent = (productCostTotal/cfaAmount + confirmationFees*(stock-swapAmount*stock/100) + deliveryFees*(stock-swapAmount*stock/100) + 
+	leadFees*stock*confirmationDeliveryCoeff + totalSells*codVAT +
+	selectedEntry.amount*totalWeight).toFixed(2) + ' ' + currency;
+  document.getElementById("shipsen-total-charges-mad").textContent = ((productCostTotal/cfaAmount + confirmationFees*(stock-swapAmount*stock/100) + deliveryFees*(stock-swapAmount*stock/100) + 
+	leadFees*stock*confirmationDeliveryCoeff + totalSells*codVAT + selectedEntry.amount*totalWeight)*cfaAmount).toFixed(2) + ' MAD' ;
+}
+	
+}else{
+	if (selectedValue === "Yes" && selectedsellerValueproduct === "Yes") {
+  document.getElementById("shipsen-total-charges").textContent = (productCostTotal*cfaAmount + confirmationFees*(stock-swapAmount*stock/100) + deliveryFees*(stock-swapAmount*stock/100) + 
+	leadFees*stock*confirmationDeliveryCoeff + totalSells*codVAT +
+	selectedEntry.amount*totalWeight).toFixed(2) + ' ' + currency;
+  document.getElementById("shipsen-total-charges-mad").textContent = ((productCostTotal*cfaAmount + confirmationFees*(stock-swapAmount*stock/100) + deliveryFees*(stock-swapAmount*stock/100) + 
+	leadFees*stock*confirmationDeliveryCoeff + totalSells*codVAT + selectedEntry.amount*totalWeight)/cfaAmount).toFixed(2) + ' MAD' ;
+} else if (selectedValue === "No" && selectedsellerValueproduct === "No") {
+  document.getElementById("shipsen-total-charges").textContent = (confirmationFees*(stock-swapAmount*stock/100) + deliveryFees*(stock-swapAmount*stock/100) + 
+	leadFees*stock*confirmationDeliveryCoeff + totalSells*codVAT +
+	selectedEntry.amount*totalWeight).toFixed(2) + ' ' + currency;
+  document.getElementById("shipsen-total-charges-mad").textContent = ((confirmationFees*(stock-swapAmount*stock/100) + deliveryFees*(stock-swapAmount*stock/100) + 
+	leadFees*stock*confirmationDeliveryCoeff + totalSells*codVAT + selectedEntry.amount*totalWeight)/cfaAmount).toFixed(2) + ' MAD' ;
+} else if (selectedValue === "Yes" && selectedsellerValueproduct === "No"){
+	document.getElementById("shipsen-total-charges").textContent = (confirmationFees*(stock-swapAmount*stock/100) + deliveryFees*(stock-swapAmount*stock/100) + 
+ leadFees*stock*confirmationDeliveryCoeff + totalSells*codVAT +
+	selectedEntry.amount*totalWeight).toFixed(2) + ' ' + currency;
+  document.getElementById("shipsen-total-charges-mad").textContent = ((confirmationFees*(stock-swapAmount*stock/100) + deliveryFees*(stock-swapAmount*stock/100) + 
+	leadFees*stock*confirmationDeliveryCoeff + totalSells*codVAT + selectedEntry.amount*totalWeight)/cfaAmount).toFixed(2) + ' MAD' ;
+}else if (selectedValue === "No" && selectedsellerValueproduct === "Yes"){
+	document.getElementById("shipsen-total-charges").textContent = (productCostTotal*cfaAmount + confirmationFees*(stock-swapAmount*stock/100) + deliveryFees*(stock-swapAmount*stock/100) + 
+	leadFees*stock*confirmationDeliveryCoeff + totalSells*codVAT +
+	selectedEntry.amount*totalWeight).toFixed(2) + ' ' + currency;
+  document.getElementById("shipsen-total-charges-mad").textContent = ((productCostTotal*cfaAmount + confirmationFees*(stock-swapAmount*stock/100) + deliveryFees*(stock-swapAmount*stock/100) + 
+	leadFees*stock*confirmationDeliveryCoeff + totalSells*codVAT + selectedEntry.amount*totalWeight)/cfaAmount).toFixed(2) + ' MAD' ;
+}
+	
+}
+
+
+
+if (selectedsellerValueproduct == "No") {
+    if (country === "Congo Kinshasa") {
+        document.getElementById('seller-product-cost-details').textContent = (productCostTotal/cfaAmount).toFixed(1) + ' ' + currency;
+    } else {
+        document.getElementById('seller-product-cost-details').textContent = (productCostTotal*cfaAmount).toFixed(1) + ' ' + currency;
+    }
+
+    document.getElementById('seller-product-cost-details-mad').textContent = productCostTotal + ' MAD';
+    document.getElementById("seller-product-cost-details-usd").textContent = (productCostTotal/exRate).toFixed(1) + ' USD';
+} 
+else {
+    document.getElementById('seller-product-cost-details').textContent = '0 ' + currency;
+    document.getElementById('seller-product-cost-details-mad').textContent = '0 MAD';
+    document.getElementById('seller-product-cost-details-usd').textContent = '0 USD';
+}
+
+	if (country === "Congo Kinshasa") {
+	document.getElementById("seller-facebook-ads-charges-usd").textContent = (adstest + stock*confirmationDeliveryCoeff*leadCost).toFixed(2) + ' USD';
+	document.getElementById("seller-facebook-ads-charges").textContent = (((stock*confirmationDeliveryCoeff*leadCost+adstest)*(exRate/cfaAmount))).toFixed(1) + ' ' + currency;
+	document.getElementById("seller-facebook-ads-charges-mad").textContent = (exRate * (stock*confirmationDeliveryCoeff*leadCost+adstest)).toFixed(2)  + ' MAD';
+	}else {
+	document.getElementById("seller-facebook-ads-charges-usd").textContent = (adstest + stock*confirmationDeliveryCoeff*leadCost).toFixed(2) + ' USD';	
+	document.getElementById("seller-facebook-ads-charges").textContent = (((stock*confirmationDeliveryCoeff*leadCost+adstest)*exRate)*cfaAmount).toFixed(1) + ' ' + currency;
+	document.getElementById("seller-facebook-ads-charges-mad").textContent = (exRate * (stock*confirmationDeliveryCoeff*leadCost+adstest)).toFixed(2)  + ' MAD';
+	}
+	
+	document.getElementById("store-fees-usd").textContent = storeFees + ' USD';
+	document.getElementById("store-fees-mad").textContent = storeFees*exRate + ' MAD';
+	
+	if (country === "Congo Kinshasa") {
+	document.getElementById("store-fees-cfa").textContent = (storeFees*(exRate/cfaAmount)).toFixed(1) + ' ' + currency;
+	document.getElementById("seller-other-charges").textContent = ((otherFees*(exRate/cfaAmount))).toFixed(1) + ' ' + currency; 		
+	}else{
+	document.getElementById("store-fees-cfa").textContent = (storeFees*exRate*cfaAmount).toFixed(1) + ' ' + currency;
+	document.getElementById("seller-other-charges").textContent = ((otherFees*exRate)*cfaAmount).toFixed(1) + ' ' + currency; 		
+	}
+	
+	document.getElementById("seller-other-charges-usd").textContent = otherFees + ' USD';	
+	document.getElementById("seller-other-charges-mad").textContent = otherFees*exRate + ' MAD'; 
+	
+	
+	if (selectedsellerValueproduct == "No"){
+		if (country === "Congo Kinshasa") {
+	document.getElementById("seller-total-charges").textContent = (productCostTotal/cfaAmount +
+	(stock*confirmationDeliveryCoeff*leadCost*(exRate/cfaAmount)) + (otherFees*(exRate/cfaAmount)) + storeFees*(exRate/cfaAmount) + adstest*(exRate/cfaAmount)).toFixed(2) + ' ' + currency ;
+	document.getElementById("seller-total-charges-mad").textContent = (productCostTotal + 
+	(stock*confirmationDeliveryCoeff*leadCost*exRate) + otherFees*exRate + storeFees*exRate + adstest*exRate).toFixed(2) + ' MAD';
+	document.getElementById("seller-total-charges-usd").textContent = (productCostTotal/exRate +
+	(stock*confirmationDeliveryCoeff*leadCost) + otherFees + storeFees +adstest).toFixed(2) + ' USD';	
+			
+		}else {
+	document.getElementById("seller-total-charges").textContent = (productCostTotal*cfaAmount +
+	(stock*confirmationDeliveryCoeff*leadCost*exRate)*cfaAmount + (otherFees*exRate)*cfaAmount + storeFees*exRate*cfaAmount + adstest*exRate*cfaAmount).toFixed(2) + ' ' + currency ;
+	document.getElementById("seller-total-charges-mad").textContent = (productCostTotal + 
+	(stock*confirmationDeliveryCoeff*leadCost*exRate) + otherFees*exRate + storeFees*exRate + adstest*exRate).toFixed(2) + ' MAD';
+	document.getElementById("seller-total-charges-usd").textContent = (productCostTotal/exRate +
+	(stock*confirmationDeliveryCoeff*leadCost) + otherFees + storeFees +adstest).toFixed(2) + ' USD';	
+			
+		}
+		
+	}else{
+		if (country === "Congo Kinshasa") {
+	document.getElementById("seller-total-charges").textContent = ((stock*confirmationDeliveryCoeff*leadCost*(exRate/cfaAmount)) + (otherFees*(exRate/cfaAmount)) + storeFees*(exRate/cfaAmount) + adstest*(exRate/cfaAmount)).toFixed(2) + ' ' + currency ;
+	document.getElementById("seller-total-charges-mad").textContent = ((stock*confirmationDeliveryCoeff*leadCost*exRate) + 
+	otherFees*exRate + adstest*exRate + storeFees*exRate).toFixed(2) +' MAD';
+	document.getElementById("seller-total-charges-usd").textContent = ((stock*confirmationDeliveryCoeff*leadCost) + otherFees + adstest + storeFees).toFixed(2) + ' USD';
+			
+		}else {
+	document.getElementById("seller-total-charges").textContent = ((stock*confirmationDeliveryCoeff*leadCost*exRate)*cfaAmount + 
+	(otherFees*exRate)*cfaAmount + (adstest*exRate)*cfaAmount + (storeFees*exRate)*cfaAmount).toFixed(2) + ' ' + currency ;
+	document.getElementById("seller-total-charges-mad").textContent = ((stock*confirmationDeliveryCoeff*leadCost*exRate) + 
+	otherFees*exRate + adstest*exRate + storeFees*exRate).toFixed(2) +' MAD';
+	document.getElementById("seller-total-charges-usd").textContent = ((stock*confirmationDeliveryCoeff*leadCost) + otherFees + adstest + storeFees).toFixed(2) + ' USD';
+			
+		}
+	}
+
+	
+	if (swapAmount == "0" || swapAmount == ""){
+		document.getElementById("swap-mad").textContent = 0 +' MAD';
+		document.getElementById("swap-usd").textContent = 0 +' USD';
+	}else if (swapAmount >= 1){
+		if (country == "Congo Kinshasa"){
+		const swapAmountMAD = (Math.ceil(swapAmount*stock/100) * productCost +((Math.ceil(swapAmount*stock/100))*(productWeight/1000)*selectedEntry.amount)*cfaAmount).toFixed(2);
+		const swapAmountUSD = ((Math.ceil(swapAmount*stock/100) * productCost +((Math.ceil(swapAmount*stock/100))*(productWeight/1000)*selectedEntry.amount)*cfaAmount)/exRate).toFixed(2);
+		document.getElementById("swap-mad").textContent =  swapAmountMAD + ' MAD';
+		document.getElementById("swap-usd").textContent = swapAmountUSD + ' USD';
+		}else{
+		const swapAmountMAD = (Math.ceil(swapAmount*stock/100) * productCost +((Math.ceil(swapAmount*stock/100))*(productWeight/1000)*selectedEntry.amount)/cfaAmount).toFixed(2);
+		const swapAmountUSD = (Math.ceil(swapAmount*stock/100) * productCost/exRate +((Math.ceil(swapAmount*stock/100))*(productWeight/1000)*(selectedEntry.amount)/cfaAmount/exRate)).toFixed(2);
+		document.getElementById("swap-mad").textContent =  swapAmountMAD + ' MAD';
+		document.getElementById("swap-usd").textContent = swapAmountUSD + ' USD';
+		}
+		
+	}
+	
+	
+	const facebookadsCharges = (adstest + stock*confirmationDeliveryCoeff*leadCost)*exRate;
+	
+	const budgetMAD = (productCostTotal + facebookadsCharges + storeFees*exRate + otherFees*exRate).toFixed(2);
+	const budgetUSD = (productCostTotal/exRate + facebookadsCharges/exRate + storeFees + otherFees).toFixed(2);
+
+
+var selectbudgetProductcost = document.getElementById("stock-funded");
+
+// Get the selected value
+var selectedsellerValueproduct = selectbudgetProductcost.value;
+
+if (selectedsellerValueproduct == "No"){
+	document.getElementById("budget-mad").textContent = budgetMAD + ' MAD';
+	document.getElementById("budget-usd").textContent = budgetUSD + ' USD';
+}else{
+	document.getElementById("budget-mad").textContent = (budgetMAD-productCostTotal).toFixed(2) + ' MAD';
+	document.getElementById("budget-usd").textContent = (budgetUSD-(productCostTotal/exRate)).toFixed(2) + ' USD';
+	
+}
+
+const budgetToinvestMAD = parseInt(document.getElementById("budget-mad").textContent);
+const budgetToinvestUSD = parseInt(document.getElementById("budget-usd").textContent);
+
+
+const totalsellerchargesmad = parseInt(document.getElementById("seller-total-charges-mad").textContent);
+const totalsellerchargesusd = parseInt(document.getElementById("seller-total-charges-usd").textContent);
+
+const swapmad = parseInt(document.getElementById("swap-mad").textContent);
+const swapusd = parseInt(document.getElementById("swap-usd").textContent);
+
+
+const totalshipsenchargesmad = parseInt(document.getElementById("shipsen-total-charges-mad").textContent);
+
+var selectshipsensubscription = document.getElementById("shipsen-subscription");
+
+var selectvaluesubscription = selectshipsensubscription.value;
+
+
+// Calculate net profit values
+
+if (country == "Congo Kinshasa"){
+	var netProfitMAD = ((totalSells*cfaAmount) - (budgetToinvestMAD + totalshipsenchargesmad)).toFixed(2);
+	var netProfitUSD = (((totalSells*cfaAmount)-(budgetToinvestUSD*exRate+(totalshipsenchargesmad)))/exRate).toFixed(2);
+}else{
+
+var netProfitMAD = ((totalSells / cfaAmount) - (budgetToinvestMAD + totalshipsenchargesmad)).toFixed(2);
+var netProfitUSD = ((totalSells / cfaAmount) / exRate - (budgetToinvestUSD + (totalshipsenchargesmad / exRate))).toFixed(2);
+}
+
+// Set text content for net profit values
+document.getElementById("net-profit-mad").textContent = netProfitMAD + ' MAD';
+document.getElementById("net-profit-usd").textContent = netProfitUSD + ' USD';
+
+
+// Remove color classes
+document.getElementById("net-profit-mad").classList.remove("positive", "negative");
+document.getElementById("net-profit-usd").classList.remove("positive", "negative");
+
+// Add color classes based on net profit values
+if (parseFloat(netProfitMAD) > 0) {
+  document.getElementById("net-profit-mad").classList.add("positive");
+} else if (parseFloat(netProfitMAD) < 0) {
+  document.getElementById("net-profit-mad").classList.add("negative");
+}
+
+if (parseFloat(netProfitUSD) > 0) {
+  document.getElementById("net-profit-usd").classList.add("positive");
+} else if (parseFloat(netProfitUSD) < 0) {
+  document.getElementById("net-profit-usd").classList.add("negative");
+}
+
+	
+	
+const netprofitmad = parseInt(document.getElementById("net-profit-mad").textContent);
+const netprofitusd = parseInt(document.getElementById("net-profit-usd").textContent);
+
+var roiMAD = ((netprofitmad / budgetToinvestMAD) * 100).toFixed(2);
+var roiUSD = ((netprofitusd / budgetToinvestUSD) * 100).toFixed(2);
+
+document.getElementById("roi-mad").textContent = roiMAD + ' %';
+document.getElementById("roi-usd").textContent = roiUSD + ' %';
+
+// Remove color classes
+document.getElementById("roi-mad").classList.remove("positive", "negative");
+document.getElementById("roi-usd").classList.remove("positive", "negative");
+
+// Add color classes based on ROI values
+if (parseFloat(netProfitMAD) > 0) {
+  document.getElementById("roi-mad").classList.add("positive");
+  document.getElementById("roi-usd").classList.add("positive");
+} else if (parseFloat(netProfitMAD) < 0) {
+  document.getElementById("roi-mad").classList.add("negative");
+  document.getElementById("roi-usd").classList.add("negative");
+}
+
+  const shipsentotalcharges = document.getElementById("shipsen-total-charges-mad").textContent;
+  const totalCosts = (budgetToinvestMAD + parseFloat(shipsentotalcharges))*cfaAmount;
+  const totalCostsRDC = (budgetToinvestMAD + parseFloat(shipsentotalcharges))/cfaAmount;
+  const unitSold = stock - (stock * swapAmount / 100);
+  
+  const minimumSellingPrice = Math.ceil(totalCosts / unitSold / 1000) * 1000;
+  const minimumSellingPriceRDC = Math.ceil(totalCostsRDC / unitSold);
+
+if (country == "Congo Kinshasa"){
+var breakevenQuantitymad = Math.floor((budgetToinvestMAD + totalshipsenchargesmad + swapmad) / (sellingPrice*cfaAmount));
+var breakevenQuantityusd = Math.floor((budgetToinvestUSD + (totalshipsenchargesmad/exRate) + swapusd) / ((sellingPrice*cfaAmount)/exRate));
+
+// Display the calculated minimum selling price in the table
+  document.getElementById("minimum-selling-price").textContent = minimumSellingPriceRDC.toFixed(2) + ' ' + currency;
+}else{
+var breakevenQuantitymad = Math.floor((budgetToinvestMAD + totalshipsenchargesmad + swapmad) / (sellingPrice / cfaAmount));
+var breakevenQuantityusd = Math.floor((budgetToinvestUSD + totalshipsenchargesmad/exRate + swapusd) / ((sellingPrice / cfaAmount)/exRate));
+
+// Display the calculated minimum selling price in the table
+  document.getElementById("minimum-selling-price").textContent = minimumSellingPrice.toFixed(2) + ' ' + currency;
+}
+document.getElementById("break-even-mad").textContent = breakevenQuantitymad + ' Pcs';
+document.getElementById("break-even-usd").textContent = breakevenQuantityusd + ' Pcs';
+
+var netprofitperproductMAD = netprofitmad/stock;
+var netprofitperproductUSD = netprofitusd/stock;
+
+document.getElementById("net-profit-perproduct-mad").textContent = netprofitperproductMAD.toFixed(2) + ' MAD';
+document.getElementById("net-profit-perproduct-usd").textContent = (netprofitperproductUSD).toFixed(2) + ' USD';
+
+// Remove color classes
+document.getElementById("net-profit-perproduct-mad").classList.remove("positive", "negative");
+document.getElementById("net-profit-perproduct-usd").classList.remove("positive", "negative");
+
+// Add color classes based on ROI values
+if (parseFloat(netProfitMAD) > 0) {
+  document.getElementById("net-profit-perproduct-mad").classList.add("positive");
+  document.getElementById("net-profit-perproduct-usd").classList.add("positive");
+} else if (parseFloat(netProfitMAD) < 0) {
+  document.getElementById("net-profit-perproduct-mad").classList.add("negative");
+  document.getElementById("net-profit-perproduct-usd").classList.add("negative");
+}
+	
+  } else {
+    document.getElementById("transport-clearance-details").textContent = "N/A";
+  }
+  
+
+  
+  
+});
+
+
+function updateShippingMode() {
+    const countrySelect = document.getElementById("country");
+    const shippingModeSelect = document.getElementById("shipping-mode");
+
+    const selectedCountry = countrySelect.value;
+    const expressOption = shippingModeSelect.querySelector('option[value="Express"]');
+    const standardOption = shippingModeSelect.querySelector('option[value="Standard"]');
+
+    if (selectedCountry === "Gabon" || selectedCountry === "Cameroun" || selectedCountry === "Argentina" || selectedCountry === "Congo Kinshasa" || selectedCountry === "Guinea") {
+      expressOption.style.display = "block";
+      standardOption.style.display = "none";
+      shippingModeSelect.value = "Express"; // Set default value to Express
+    } else {
+      expressOption.style.display = "block";
+      standardOption.style.display = "block";
+    }
+  }
+  
+  function updateCurrencySymbol() {
+  var cfaHead = document.getElementById("cfaHead");
+  var countrySelect = document.getElementById("country");
+  var currencySymbol = document.querySelector(".currency-input .currency-symbol");
+  var currencyColumn = document.querySelector("#details-table th:nth-child(2)");
+  var shipsenCurrencyColumn = document.querySelector("#shipsen-charges th:nth-child(2)");
+  var sellerCurrencyColumn = document.querySelector("#seller-charges th:nth-child(3)");
+
+  // Get the selected value from the dropdown
+  var selectedCountry = countrySelect.value;
+
+  // Update the currency symbol based on the selected value
+  switch (selectedCountry) {
+    case "Senegal":
+    case "Cote d'Ivoire":
+    case "Mali":
+    case "Burkina":
+	  cfaHead.textContent = "CFA"
+      currencySymbol.textContent = "CFA";
+      currencyColumn.textContent = "Amount (XAF)";
+	  shipsenCurrencyColumn.textContent = "Amount (XAF)";
+	  sellerCurrencyColumn.textContent = "Amount (XAF)";
+      break;
+	case "Gabon":
+    case "Cameroun":
+    case "Argentina":
+	  cfaHead.textContent = "CFA"
+      currencySymbol.textContent = "CFA";
+      currencyColumn.textContent = "Amount (XOF)";
+	  shipsenCurrencyColumn.textContent = "Amount (XOF)";
+	  sellerCurrencyColumn.textContent = "Amount (XOF)";
+	  break;
+	  
+    case "Guinea":
+	  cfaHead.textContent = "GNF"
+      currencySymbol.textContent = "GNF";
+      currencyColumn.textContent = "Amount (GNF)";
+	  shipsenCurrencyColumn.textContent = "Amount (GNF)";
+	  sellerCurrencyColumn.textContent = "Amount (GNF)";
+      break;
+    case "Gambia":
+	  cfaHead.textContent = "CFA"
+      currencySymbol.textContent = "GMD";
+      currencyColumn.textContent = "Amount (GMD)";
+	  shipsenCurrencyColumn.textContent = "Amount (GMD)";
+	  sellerCurrencyColumn.textContent = "Amount (GMD)";
+      break;
+    case "Congo Kinshasa":
+	  cfaHead.textContent = "USD-RDC"
+      currencySymbol.textContent = "USD";
+      currencyColumn.textContent = "Amount (USD-RDC)";
+	  shipsenCurrencyColumn.textContent = "Amount (USD-RDC)";
+	  sellerCurrencyColumn.textContent = "Amount (USD-RDC)";
+      break;
+    default:
+	  cfaHead.textContent = "CFA"  
+      currencySymbol.textContent = "CFA";
+      currencyColumn.textContent = "Amount (CFA)";
+	  shipsenCurrencyColumn.textContent = "Amount (CFA)";
+	  sellerCurrencyColumn.textContent = "Amount (CFA)";
+      break;
+  }
+}
+
+window.addEventListener('DOMContentLoaded', (event) => {
+    updateFlagIcon();
+	updateSourcingFlagIcon();
+  });
+
+
+function updateFlagIcon() {
+    var countrySelect = document.getElementById("country");
+    var flagIcon = document.getElementById("selected-flag");
+
+    // Get the selected value from the dropdown
+    var selectedCountry = countrySelect.value;
+
+    // Update the flag icon based on the selected value
+    switch (selectedCountry) {
+      case "Senegal":
+        flagIcon.src = "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fd/Flag_of_Senegal.svg/langfr-338px-Flag_of_Senegal.svg.png";
+        break;
+      case "Mali":
+        flagIcon.src = "https://upload.wikimedia.org/wikipedia/commons/thumb/9/92/Flag_of_Mali.svg/165px-Flag_of_Mali.svg.png";
+        break;
+      case "Mali":
+        flagIcon.src = "https://upload.wikimedia.org/wikipedia/commons/thumb/9/92/Flag_of_Mali.svg/165px-Flag_of_Mali.svg.png";
+        break;
+	 case "Cote d'Ivoire":
+        flagIcon.src = "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fe/Flag_of_C%C3%B4te_d%27Ivoire.svg/langfr-180px-Flag_of_C%C3%B4te_d%27Ivoire.svg.png";
+        break;
+	 case "Gabon":
+        flagIcon.src = "https://upload.wikimedia.org/wikipedia/commons/thumb/0/04/Flag_of_Gabon.svg/165px-Flag_of_Gabon.svg.png";
+        break;
+	 case "Cameroun":
+        flagIcon.src = "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4f/Flag_of_Cameroon.svg/165px-Flag_of_Cameroon.svg.png";
+        break;
+	 case "Argentina":
+        flagIcon.src = "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1a/Flag_of_Argentina.svg/langfr-180px-Flag_of_Argentina.svg.png";
+        break;
+	 case "Guinea":
+        flagIcon.src = "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ed/Flag_of_Guinea.svg/165px-Flag_of_Guinea.svg.png";
+        break;
+	 case "Gambia":
+        flagIcon.src = "https://upload.wikimedia.org/wikipedia/commons/thumb/7/77/Flag_of_The_Gambia.svg/165px-Flag_of_The_Gambia.svg.png";
+        break;
+	 case "Burkina":
+        flagIcon.src = "https://upload.wikimedia.org/wikipedia/commons/thumb/3/31/Flag_of_Burkina_Faso.svg/165px-Flag_of_Burkina_Faso.svg.png";
+        break;
+	 case "Congo Kinshasa":
+        flagIcon.src = "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/Flag_of_the_Democratic_Republic_of_the_Congo.svg/165px-Flag_of_the_Democratic_Republic_of_the_Congo.svg.png";
+        break;
+      default:
+        flagIcon.src = "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fd/Flag_of_Senegal.svg/1280px-Flag_of_Senegal.svg.png"; // Default placeholder image
+        break;
+    }
+  }
+  
+  function updateSourcingFlagIcon() {
+    var sourcingSelect = document.getElementById("sourcing-from");
+    var sourcingFlagIcon = document.getElementById("sourcing-flag");
+
+    // Get the selected value from the dropdown
+    var selectedSourcing = sourcingSelect.value;
+
+    // Update the flag icon based on the selected value
+    switch (selectedSourcing) {
+      case "Morocco":
+        sourcingFlagIcon.src = "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Flag_of_Morocco.svg/165px-Flag_of_Morocco.svg.png";
+        break;
+      case "China":
+        sourcingFlagIcon.src = "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fa/Flag_of_the_People%27s_Republic_of_China.svg/165px-Flag_of_the_People%27s_Republic_of_China.svg.png";
+        break;
+      case "Dubai":
+        sourcingFlagIcon.src = "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cb/Flag_of_the_United_Arab_Emirates.svg/165px-Flag_of_the_United_Arab_Emirates.svg.png";
+        break;
+	  case "Turkey":
+        sourcingFlagIcon.src = "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b4/Flag_of_Turkey.svg/165px-Flag_of_Turkey.svg.png";
+        break;
+      // Add more cases for other sourcing options if needed
+      default:
+        sourcingFlagIcon.src = "flags/placeholder.png"; // Default placeholder image
+        break;
+    }
+  }
+  
+function updatePrice(selectElement) {
+    const row = selectElement.closest('tr');
+    const country = row.querySelector('.country').value;
+    const sourcingFrom = row.querySelector('.sourcing-from').value;
+    const shippingMode = row.querySelector('.shipping-mode').value;
+
+    const selectedDataMAD = transportClearanceAmountsMAD.find(item =>
+        item.country === country &&
+        item.sourcingFrom === sourcingFrom &&
+        item.shippingMode === shippingMode
+    );
+
+    const selectedData = transportClearanceAmounts.find(item =>
+        item.country === country &&
+        item.sourcingFrom === sourcingFrom &&
+        item.shippingMode === shippingMode
+    );
+
+    if (selectedDataMAD) {
+        row.querySelector('.amountMAD').innerText = selectedDataMAD.amountMAD || 'N/A';
+    }
+
+    if (selectedData) {
+        row.querySelector('.amount').innerText = selectedData.amount || 'N/A';
+    }
+}
+
+  </script>
